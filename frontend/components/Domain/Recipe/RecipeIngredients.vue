@@ -94,3 +94,33 @@ export default defineComponent({
   margin: auto !important;
 }
 </style>
+<script>
+export default {
+  data() {
+    return {
+      webhookResponse: null,
+    };
+  },
+  methods: {
+    async callWebhook() {
+      const recipeId = this.$route.params.id; // Rezept-ID aus der URL abrufen
+      const url = `hass.eliasb1110.de/webhook/ricnricndcindcirn?id=${recipeId}`;
+
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          const result = await response.text();
+          this.webhookResponse = result === '1' ? 'Erfolgreich!' : 'Fehler!';
+        } else {
+          this.webhookResponse = 'Fehler beim Aufrufen des Webhooks.';
+        }
+      } catch (error) {
+        this.webhookResponse = 'Fehler beim Aufrufen des Webhooks.';
+      }
+    },
+  },
+};
+</script>
+<button @click="callWebhook">Rezept an Webhook senden</button>
+<div v-if="webhookResponse">{{ webhookResponse }}</div>
+
